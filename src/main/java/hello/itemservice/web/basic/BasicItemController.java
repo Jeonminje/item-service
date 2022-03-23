@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -52,13 +53,31 @@ public class BasicItemController {
 
         return "basic/item";
     }
-    @PostMapping ("/add")
+    //@PostMapping ("/add")
     public String addItemV2(@ModelAttribute("item") Item item){ // "item" 으로 모델을 넘겨줌. 그리고 "item" 조차 생략가능. 객체 앞글자만 소문자로 바꿔서 넘겨줌.
         itemRepository.save(item);
 
         //model.addAttribute("item",item); 생략가능 모델어트리뷰트 떄문에
 
         return "basic/item";
+    }
+
+    //@PostMapping ("/add")
+    public String addItemV3(@ModelAttribute("item") Item item){ // "item" 으로 모델을 넘겨줌. 그리고 "item" 조차 생략가능. 객체 앞글자만 소문자로 바꿔서 넘겨줌.
+        itemRepository.save(item);
+
+        //model.addAttribute("item",item); 생략가능 모델어트리뷰트 떄문에
+
+        return "redirect:/basic/items/"+item.getId();
+    }
+
+    @PostMapping ("/add")
+    public String addItemV4(@ModelAttribute("item") Item item, RedirectAttributes redirectAttributes){
+        Item savedItem = itemRepository.save(item);
+        redirectAttributes.addAttribute("itemId",savedItem.getId());
+        redirectAttributes.addAttribute("status",true);
+
+        return "redirect:/basic/items/{itemId}";
     }
 
     @GetMapping("/{itemId}/edit")
